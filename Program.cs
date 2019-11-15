@@ -22,6 +22,7 @@ namespace ADBTeam01_DB4O
                 Stored10MonHoc(db);
                 RetrieveAllMonHoc(db);
                 RetrieveCNTT(db);
+                RetrieveKDK(db);
             }
             finally
             {
@@ -82,13 +83,26 @@ namespace ADBTeam01_DB4O
 
         public static void RetrieveCNTT(IObjectContainer db)
         {
-
-            IQuery query = db.Query();
-            query.Constrain(typeof(MonHoc));
-            query.Descend("_KhoaQuanLy").Descend("_TenKhoa").Constrain("CNTT");
-            IObjectSet result = query.Execute();
-            ListResult(result);
+            IList<MonHoc> result = db.Query(delegate (MonHoc m)
+              {
+                  return m.KhoaQuanLy.TenKhoa == "CNTT" && m.SoTinChi > 2 && m.MonDieuKien.Count > 1;
+              });
+            foreach(MonHoc m in result)
+            {
+                Console.WriteLine(m);
+            }
         }
 
+        public static void RetrieveKDK(IObjectContainer db)
+        {
+            IList<MonHoc> result = db.Query(delegate (MonHoc m)
+            {
+                return m.SoTinChi == 3 && m.MonDieuKien == null;
+            });
+            foreach (MonHoc m in result)
+            {
+                Console.WriteLine(m);
+            }
+        }
     }
 }
